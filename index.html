@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="monetag" content="8b36d5553707bba1ec1c7c3c321e8b02">
     <title>Fruit Crush Saga - Ultimate Edition</title>
     <link rel="stylesheet" href="assets/css/style.css">
 </head>
@@ -238,10 +239,10 @@
             <button class="btn btn-secondary" onclick="game.closeShop()">Close</button>
         </div>
     </div>
-     
-       <!-- Add these before closing </body> -->
+   
+      <!-- Modules -->
 <script src="assets/js/modules/admin-system.js"></script>
-<script src="assets/js/modules/real-ads.js"></script>
+<script src="assets/js/modules/monetag-ads.js"></script>
 <script src="assets/js/modules/swipe.js"></script>
 <script src="assets/js/modules/animations.js"></script>
 <script src="assets/js/game-core.js"></script>
@@ -249,37 +250,31 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        // Initialize game
         window.game = new FruitCrush();
-        
-        // Initialize admin system (tracks everything)
         game.admin = new AdminSystem(game);
-        
-        // Initialize ads
-        game.ads = new RealAds(game);
-        
-        // Initialize other systems
+        game.ads = new MonetagAds(game);
         game.swipe = new SwipeController(game);
         game.animator = new AnimationManager();
         
-        // Track level completion in game
+        // Track events
         const originalLevelComplete = game.levelComplete;
         game.levelComplete = function() {
-            game.admin.trackLevelComplete(
-                game.level, 
-                game.score, 
-                game.calculateStars(), 
-                game.moves
-            );
+            game.admin.trackLevelComplete(game.level, game.score, game.calculateStars(), game.moves);
             originalLevelComplete.call(game);
         };
         
-        // Show banner ad after delay
+        const originalGameOver = game.gameOver;
+        game.gameOver = function() {
+            game.admin.trackGameOver(game.level, game.score, 'out_of_moves');
+            if (game.ads) game.ads.showInterstitial();
+            originalGameOver.call(game);
+        };
+        
+        // Show banner after 5 seconds
         setTimeout(() => {
             if (game.ads) game.ads.showBanner();
         }, 5000);
-    });
-         
+    });         
     </script>
 </body>
 </html>
