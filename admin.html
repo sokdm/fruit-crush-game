@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🍓 Fruit Crush - Admin Dashboard</title>
+    <link rel="stylesheet" href="assets/css/admin-style.css">
+</head>
+<body>
+
+    <!-- LOGIN SCREEN -->
+    <div class="login-screen" id="loginScreen">
+        <div class="login-box">
+            <h1>🍓 Fruit Crush Admin</h1>
+            <p style="margin-bottom: 20px; opacity: 0.8;">Enter password to access dashboard</p>
+            <input type="password" id="passwordInput" placeholder="Password" onkeypress="if(event.key==='Enter')login()">
+            <button onclick="login()">🔓 Unlock Dashboard</button>
+            <div class="error" id="errorMsg">Incorrect password!</div>
+        </div>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div class="dashboard" id="dashboard">
+        <div class="dashboard-header">
+            <div>
+                <h1>📊 Analytics Dashboard</h1>
+                <p style="opacity: 0.8;">Real-time game statistics & revenue tracking</p>
+            </div>
+            <div class="header-actions">
+                <button class="btn btn-success" onclick="exportData()">📥 Export CSV</button>
+                <button class="btn btn-primary" onclick="refreshData()">🔄 Refresh</button>
+                <button class="btn btn-danger" onclick="logout()">🔒 Logout</button>
+            </div>
+        </div>
+
+        <!-- OVERVIEW STATS -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">💰 Total Revenue</div>
+                <div class="stat-value gold" id="totalRevenue">$0.00</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">📅 Today's Revenue</div>
+                <div class="stat-value" id="todayRevenue">$0.00</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">👥 Total Sessions</div>
+                <div class="stat-value" id="totalSessions">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">🎯 Ad Impressions</div>
+                <div class="stat-value" id="adImpressions">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">🖱️ Ad Clicks</div>
+                <div class="stat-value danger" id="adClicks">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">📈 CTR Rate</div>
+                <div class="stat-value" id="ctrRate">0%</div>
+            </div>
+        </div>
+
+        <!-- TABS -->
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('revenue')">💵 Revenue</button>
+            <button class="tab" onclick="showTab('ads')">📺 Ads Performance</button>
+            <button class="tab" onclick="showTab('users')">👤 User Analytics</button>
+            <button class="tab" onclick="showTab('levels')">🎮 Game Stats</button>
+            <button class="tab" onclick="showTab('daily')">📊 Daily Chart</button>
+        </div>
+
+        <!-- REVENUE TAB -->
+        <div class="tab-content active" id="revenueTab">
+            <div class="section">
+                <h2>💵 Revenue by Source</h2>
+                <div id="revenueBySource"></div>
+                
+                <h3 style="margin-top: 30px; margin-bottom: 15px;">Recent Transactions</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Source</th>
+                            <th>Item</th>
+                            <th>Amount</th>
+                            <th>User Level</th>
+                        </tr>
+                    </thead>
+                    <tbody id="transactionsTable"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ADS TAB -->
+        <div class="tab-content" id="adsTab">
+            <div class="section">
+                <h2>📺 Ad Performance</h2>
+                <div class="stats-grid" style="margin-top: 20px;">
+                    <div class="stat-card">
+                        <div class="stat-label">Total Impressions</div>
+                        <div class="stat-value" id="totalImpressions">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Total Clicks</div>
+                        <div class="stat-value" id="totalClicks">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Est. Ad Revenue</div>
+                        <div class="stat-value gold" id="estAdRevenue">$0.00</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">eCPM</div>
+                        <div class="stat-value" id="ecpm">$0.00</div>
+                    </div>
+                </div>
+
+                <h3 style="margin-top: 30px; margin-bottom: 15px;">Impression History</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Type</th>
+                            <th>Provider</th>
+                            <th>User Level</th>
+                        </tr>
+                    </thead>
+                    <tbody id="impressionsTable"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- USERS TAB -->
+        <div class="tab-content" id="usersTab">
+            <div class="section">
+                <h2>👤 User Analytics</h2>
+                <div id="userStats"></div>
+                
+                <h3 style="margin-top: 30px; margin-bottom: 15px;">Recent Sessions</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Start Time</th>
+                            <th>Duration</th>
+                            <th>Device</th>
+                            <th>Screen</th>
+                        </tr>
+                    </thead>
+                    <tbody id="sessionsTable"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- LEVELS TAB -->
+        <div class="tab-content" id="levelsTab">
+            <div class="section">
+                <h2>🎮 Level Statistics</h2>
+                <div id="levelStats"></div>
+                
+                <h3 style="margin-top: 30px; margin-bottom: 15px;">Top Performing Levels</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Level</th>
+                            <th>Completions</th>
+                            <th>Avg Score</th>
+                            <th>Performance</th>
+                        </tr>
+                    </thead>
+                    <tbody id="topLevelsTable"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- DAILY CHART TAB -->
+        <div class="tab-content" id="dailyTab">
+            <div class="section">
+                <h2>📊 Last 7 Days Performance</h2>
+                <div class="chart-container">
+                    <div class="chart-bar" id="dailyChart"></div>
+                </div>
+                
+                <table style="margin-top: 20px;">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Revenue</th>
+                            <th>Sessions</th>
+                            <th>Ad Impressions</th>
+                            <th>Levels Completed</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dailyTable"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/js/admin-dashboard.js"></script>
+
+</body>
+</html>
+

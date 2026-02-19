@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Fruit Crush Saga - Ultimate Edition</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div class="loading" id="loading">
+        <div class="spinner"></div>
+        <div class="loading-text">Loading Fruit Crush...</div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div class="toast" id="toast"></div>
+
+    <!-- Settings Panel -->
+    <div class="settings-panel" id="settingsPanel">
+        <h3 class="settings-title">⚙️ Settings</h3>
+        <div class="setting-item">
+            <span>🔊 Sound Effects</span>
+            <div class="toggle active" id="soundToggle" onclick="game.toggleSound()"></div>
+        </div>
+        <div class="setting-item">
+            <span>🎵 Background Music</span>
+            <div class="toggle active" id="musicToggle" onclick="game.toggleMusic()"></div>
+        </div>
+        <div class="setting-item">
+            <span>📳 Vibration</span>
+            <div class="toggle active" id="vibrationToggle" onclick="game.toggleVibration()"></div>
+        </div>
+        <div class="settings-close">
+            <button class="btn btn-small" onclick="game.closeSettings()">Close</button>
+        </div>
+    </div>
+
+    <!-- WELCOME SCREEN -->
+    <div class="screen welcome-screen active" id="welcomeScreen">
+        <div class="floating-fruits" id="floatingFruits"></div>
+        <div class="logo">🍓 Fruit Crush 🍓</div>
+        <div class="tagline">The Ultimate Match-3 Adventure!</div>
+        <button class="btn" onclick="game.showScreen('game')">▶️ Play Now</button>
+        <button class="btn btn-secondary" onclick="game.showScreen('profile')">👤 Profile</button>
+        <button class="btn btn-gold" onclick="game.showShop()">💎 Shop</button>
+        <div class="version-info">
+            <div>🎮 Version 2.0</div>
+            <div>🏆 <span id="totalPlayers">50K+</span> Players</div>
+        </div>
+    </div>
+
+    <!-- PROFILE SCREEN -->
+    <div class="screen profile-screen" id="profileScreen">
+        <div class="profile-header-bar">
+            <button class="btn btn-small" onclick="game.showScreen('welcome')">← Back</button>
+            <h2 class="screen-title">Player Profile</h2>
+            <button class="btn btn-small" onclick="game.showSettings()">⚙️</button>
+        </div>
+
+        <div class="profile-header">
+            <div class="avatar" id="userAvatar">🎮</div>
+            <div class="username" id="username">Fruit Master</div>
+            <div class="level-badge">Level <span id="profileLevel">1</span></div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">🏆</div>
+                <div class="stat-value" id="totalScore">0</div>
+                <div class="stat-label">Total Score</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">🎯</div>
+                <div class="stat-value" id="gamesPlayed">0</div>
+                <div class="stat-label">Games Played</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">⭐</div>
+                <div class="stat-value" id="totalStars">0</div>
+                <div class="stat-label">Total Stars</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">💰</div>
+                <div class="stat-value" id="coins">100</div>
+                <div class="stat-label">Coins</div>
+            </div>
+        </div>
+
+        <div class="premium-banner">
+            <div class="premium-title">👑 Go Premium</div>
+            <div>Unlock exclusive features!</div>
+            <div class="premium-features">
+                <div class="premium-feature">✨ No Ads</div>
+                <div class="premium-feature">🚀 2x Coins</div>
+                <div class="premium-feature">🎨 Themes</div>
+            </div>
+            <button class="btn btn-gold" onclick="game.goPremium()">Upgrade $4.99</button>
+        </div>
+
+        <div class="achievements-section">
+            <div class="section-title">🏅 Achievements</div>
+            <div class="achievement-list" id="achievementList"></div>
+        </div>
+    </div>
+
+    <!-- GAME SCREEN -->
+    <div class="screen game-screen" id="gameScreen">
+        <div class="game-header">
+            <div class="game-title">Level <span id="currentLevel">1</span></div>
+            <button class="pause-btn" onclick="game.pauseGame()">⏸️</button>
+        </div>
+
+        <div class="game-stats">
+            <div class="game-stat">
+                <div class="game-stat-label">Score</div>
+                <div class="game-stat-value" id="gameScore">0</div>
+            </div>
+            <div class="game-stat">
+                <div class="game-stat-label">Moves</div>
+                <div class="game-stat-value" id="gameMoves">30</div>
+            </div>
+            <div class="game-stat">
+                <div class="game-stat-label">Target</div>
+                <div class="game-stat-value" id="targetScore">1000</div>
+            </div>
+        </div>
+
+        <div class="target-bar">
+            <div class="target-info">
+                <span>Progress</span>
+                <span id="progressText">0%</span>
+            </div>
+            <div class="progress-container">
+                <div class="progress-fill" id="progressBar" style="width: 0%"></div>
+            </div>
+        </div>
+
+        <div class="grid-container">
+            <div class="particles" id="particles"></div>
+            <div class="grid" id="grid"></div>
+        </div>
+
+        <div class="power-ups">
+            <button class="power-up" id="hammer" onclick="game.usePowerUp('hammer')">
+                🔨 <span class="power-up-count" id="hammerCount">3</span>
+            </button>
+            <button class="power-up" id="shuffle" onclick="game.usePowerUp('shuffle')">
+                🔀 <span class="power-up-count" id="shuffleCount">3</span>
+            </button>
+            <button class="power-up" id="bomb" onclick="game.usePowerUp('bomb')">
+                💣 <span class="power-up-count" id="bombCount">2</span>
+            </button>
+            <button class="power-up" id="hint" onclick="game.usePowerUp('hint')">
+                💡 <span class="power-up-count" id="hintCount">5</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- MODALS -->
+    <div class="modal-overlay" id="levelCompleteModal">
+        <div class="modal">
+            <h2>🎉 Level Complete!</h2>
+            <div class="stars" id="levelStars">⭐⭐⭐</div>
+            <div class="score-display">
+                <div>Score: <span id="levelScore">0</span></div>
+                <div class="best-score">Best: <span id="bestScore">0</span></div>
+            </div>
+            <div class="coins-earned">+<span id="coinsEarned">50</span> 💰 Coins!</div>
+            <div class="modal-buttons">
+                <button class="btn btn-small" onclick="game.nextLevel()">Next Level ➡️</button>
+                <button class="btn btn-small btn-secondary" onclick="game.restartLevel()">🔄 Replay</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="gameOverModal">
+        <div class="modal">
+            <h2 class="game-over-title">😢 Out of Moves!</h2>
+            <div class="score-display">
+                <div>Final Score: <span id="finalScore">0</span></div>
+                <div class="target-display">Target was: <span id="targetDisplay">1000</span></div>
+            </div>
+            <div class="modal-buttons">
+                <button class="btn btn-small" onclick="game.restartLevel()">🔄 Try Again</button>
+                <button class="btn btn-small btn-gold" onclick="game.buyMoves()">💰 +5 Moves (100 coins)</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="pauseModal">
+        <div class="modal">
+            <h2>⏸️ Paused</h2>
+            <div class="modal-buttons modal-vertical">
+                <button class="btn" onclick="game.resumeGame()">▶️ Resume</button>
+                <button class="btn btn-secondary" onclick="game.showScreen('welcome')">🏠 Main Menu</button>
+                <button class="btn btn-secondary" onclick="game.restartLevel()">🔄 Restart Level</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="shopModal">
+        <div class="modal modal-large">
+            <h2>💎 Fruit Shop</h2>
+            <div class="coins-display">💰 <span id="shopCoins">100</span></div>
+            <div class="shop-grid">
+                <div class="shop-item" onclick="game.buyItem('hammer', 50)">
+                    <div class="shop-item-icon">🔨</div>
+                    <div>Hammer</div>
+                    <div class="shop-item-price">50 💰</div>
+                </div>
+                <div class="shop-item" onclick="game.buyItem('shuffle', 30)">
+                    <div class="shop-item-icon">🔀</div>
+                    <div>Shuffle</div>
+                    <div class="shop-item-price">30 💰</div>
+                </div>
+                <div class="shop-item" onclick="game.buyItem('bomb', 80)">
+                    <div class="shop-item-icon">💣</div>
+                    <div>Bomb</div>
+                    <div class="shop-item-price">80 💰</div>
+                </div>
+                <div class="shop-item" onclick="game.buyItem('hints', 20)">
+                    <div class="shop-item-icon">💡</div>
+                    <div>3 Hints</div>
+                    <div class="shop-item-price">20 💰</div>
+                </div>
+                <div class="shop-item" onclick="game.buyItem('moves', 100)">
+                    <div class="shop-item-icon">⚡</div>
+                    <div>+5 Moves</div>
+                    <div class="shop-item-price">100 💰</div>
+                </div>
+                <div class="shop-item" onclick="game.buyCoins()">
+                    <div class="shop-item-icon">💎</div>
+                    <div>Coin Pack</div>
+                    <div class="shop-item-price">$0.99</div>
+                </div>
+            </div>
+            <button class="btn btn-secondary" onclick="game.closeShop()">Close</button>
+        </div>
+    </div>
+     
+       <!-- Add these before closing </body> -->
+<script src="assets/js/modules/admin-system.js"></script>
+<script src="assets/js/modules/real-ads.js"></script>
+<script src="assets/js/modules/swipe.js"></script>
+<script src="assets/js/modules/animations.js"></script>
+<script src="assets/js/game-core.js"></script>
+<script src="assets/js/game-ui.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Initialize game
+        window.game = new FruitCrush();
+        
+        // Initialize admin system (tracks everything)
+        game.admin = new AdminSystem(game);
+        
+        // Initialize ads
+        game.ads = new RealAds(game);
+        
+        // Initialize other systems
+        game.swipe = new SwipeController(game);
+        game.animator = new AnimationManager();
+        
+        // Track level completion in game
+        const originalLevelComplete = game.levelComplete;
+        game.levelComplete = function() {
+            game.admin.trackLevelComplete(
+                game.level, 
+                game.score, 
+                game.calculateStars(), 
+                game.moves
+            );
+            originalLevelComplete.call(game);
+        };
+        
+        // Show banner ad after delay
+        setTimeout(() => {
+            if (game.ads) game.ads.showBanner();
+        }, 5000);
+    });
+         
+    </script>
+</body>
+</html>
+
+   
